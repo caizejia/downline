@@ -1,0 +1,107 @@
+yii\db\Connection::$dsn数据访问对象
+
+yii\base\Application::errorHandler处理 PHP 错误和异常
+
+
+详情请参考 日志 一节。
+
+邮件
+邮件组件配置取决于你所使用的扩展。 一般来说你的应用程序配置应如下：
+return [
+    //....
+    'components' => [
+        'mailer' => [
+            'class' => 'yii\swiftmailer\Mailer',
+        ],
+    ],
+];
+
+Yii::$app->mailer->compose()
+    ->setFrom('from@domain.com')
+    ->setTo('to@domain.com')
+    ->setSubject('Message subject')
+    ->setTextBody('Plain text content')
+    ->setHtmlBody('<b>HTML content</b>')
+    ->send();
+
+
+响应
+响应对象包含的信息有HTTP状态码，HTTP头和主体内容等
+
+状态码
+Yii::$app->response->statusCode = 200;
+请求失败，可抛出对应的HTTP异常，如
+throw new \yii\web\NotFoundHttpException;
+yii\web\BadRequestHttpException：状态码 400
+yii\web\ConflictHttpException：状态码 409
+yii\web\ForbiddenHttpException：状态码 40
+yii\web\GoneHttpException：状态码 410
+yii\web\MethodNotAllowedHttpException：状态码 405
+yii\web\NotAcceptableHttpException：状态码 406
+yii\web\NotFoundHttpException：状态码 404
+yii\web\ServerErrorHttpException：状态码 500
+yii\web\TooManyRequestsHttpException：状态码 429
+yii\web\UnauthorizedHttpException：状态码 401
+yii\web\UnsupportedMediaTypeHttpException：状态码 415
+
+自定义
+throw new \yii\web\HttpException(402);
+
+HTTP 头部
+$headers = Yii::$app->response->headers;
+增加一个 Pragma 头，已存在的Pragma 头不会被覆盖。
+$headers->add('Pragma', 'no-cache');
+设置一个Pragma 头. 任何已存在的Pragma 头都会被丢弃
+$headers->set('Pragma', 'no-cache');
+删除Pragma 头并返回删除的Pragma 头的值到数组
+$values = $headers->remove('Pragma');
+
+响应主体
+需要格式化，应设置 format 和 data 属性，format 属性指定data中数据格式化后的样式，例如：
+
+$response = Yii::$app->response;
+$response->format = \yii\web\Response::FORMAT_JSON;
+$response->data = ['message' => 'hello world'];
+
+Yii::$app->response->content = 'hello world!';
+
+HTML: 通过 yii\web\HtmlResponseFormatter 来实现.
+XML: 通过 yii\web\XmlResponseFormatter来实现.
+JSON: 通过 yii\web\JsonResponseFormatter来实现.
+JSONP: 通过 yii\web\JsonResponseFormatter来实现.
+
+浏览器跳转
+yii\web\Controller::redirect()
+
+发送文件
+\Yii::$app->response->sendFile('path/to/file.txt');
+
+仅在Web applications 网页应用中可用， 详情请参考 Sessions (会话) and Cookies 一节。
+
+详情请参考 URL 解析和生成 一节。
+
+仅在Web applications 网页应用中可用， 详情请参考 认证 一节。
+
+
+
+格式化输出数据
+这个组件提供了一系列关于日期/时间，数字，货币等的格式化方法。 
+使用方法如下：
+
+$formatter = \Yii::$app->formatter;
+
+// output: January 1, 2014
+echo $formatter->asDate('2014-01-01', 'long');
+
+// output: 12.50%
+echo $formatter->asPercent(0.125, 2);
+
+// output: <a href="mailto:cebe@example.com">cebe@example.com</a>
+echo $formatter->asEmail('cebe@example.com'); 
+
+// output: Yes
+echo $formatter->asBoolean(true); 
+// it also handles display of null values:
+
+// output: (Not set)
+echo $formatter->asDate(null); 
